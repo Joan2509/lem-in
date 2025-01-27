@@ -57,3 +57,14 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 
 	return ants, rooms, nil
 }
+
+func determineRoomRole(prev string) string {
+	switch {
+	case strings.HasPrefix(prev, "##start"):
+		return "start"
+	case strings.HasPrefix(prev, "##end"):
+		return "end"
+	default:
+		return "normal"
+	}
+}
