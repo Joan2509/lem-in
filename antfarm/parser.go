@@ -68,3 +68,15 @@ func determineRoomRole(prev string) string {
 		return "normal"
 	}
 }
+
+func LinkRoom(rooms []Room, room1, room2 string) {
+	for i := range rooms {
+		if rooms[i].Name == room1 || rooms[i].Name == room2 {
+			if rooms[i].Name == room1 {
+				rooms[i].Neighbours = append(rooms[i].Neighbours, room2)
+			} else {
+				rooms[i].Neighbours = append(rooms[i].Neighbours, room1)
+			}
+		}
+	}
+}
