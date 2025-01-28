@@ -87,7 +87,6 @@ func ValidateRooms(rooms []Room) error {
 	starts := 0
 	ends := 0
 
-	// Iterate over each room to validate its properties
 	for i := 0; i < len(rooms); i++ {
 		if rooms[i].Point == "start" {
 			starts++
@@ -136,4 +135,14 @@ func ValidateRooms(rooms []Room) error {
 	}
 
 	return nil
+}
+
+// ReturnStartIndex returns the index of the "start" room in the slice of rooms.
+func ReturnStartIndex(rooms []Room) int {
+	for i, r := range rooms {
+		if r.Point == "start" {
+			return i
+		}
+	}
+	return -1
 }
