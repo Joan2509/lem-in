@@ -91,3 +91,38 @@ func SharedRoom(rt1, rt2 *Route) bool {
 	return false
 }
 
+// FindSeparates recursively finds combinations of non-overlapping routes.
+// routes: The slice of all available routes.
+// curCombo: The current combination of routes being built.
+// combosOfSeparates: A pointer to the slice of all valid combinations of non-overlapping routes.
+// ind: The current index in the routes slice.
+// wg: A pointer to a WaitGroup to synchronize goroutines.
+func FindSeparates(routes, curCombo []Route, combosOfSeparates *[][]Route, ind int, wg *sync.WaitGroup) {
+	curCombo = append(curCombo, routes[ind])
+	routes = routes[ind+1:]
+
+	newRoutes := []Route{}
+	for _, potentialRoute := range routes {
+		separate := true
+		if SharedRoom(&curCombo[len(curCombo)-1], &potentialRoute) {
+			separate = false
+		}
+		if separate {
+			newRoutes = append(newRoutes, potentialRoute)
+		}
+	}
+
+	if len(newRoutes) == 0 {
+		sepMu.Lock()
+		*combosOfSeparates = append(*combosOfSeparates, curCombo)
+		sepMu.Unlock()
+	}
+
+	for i := range newRoutes {
+		wg.Add(1)
+		go FindSeparates(newRoutes, curCombo, combosOfSeparates, i, wg)
+	}
+
+	wg.Done()
+}
+
