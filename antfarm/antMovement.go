@@ -52,4 +52,16 @@ func SortRoutes(rts *[]Route) error {
 
 	return nil
 }
+// IsOnRoute checks if a room is already in the current route.
+// route: The current route being checked.
+// room: The room to check for.
+// Returns true if the room is in the route, otherwise false.
+func IsOnRoute(route Route, room Room) bool {
+	for _, r := range route {
+		if room.Name == r {
+			return true
+		}
+	}
+	return false
+}
 
