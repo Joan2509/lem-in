@@ -64,4 +64,16 @@ func IsOnRoute(route Route, room Room) bool {
 	}
 	return false
 }
+// FindRoom returns the index of a room in the rooms slice by its name.
+// rooms: The slice of all rooms in the farm.
+// name: The name of the room to find.
+// Returns the index of the room, or -1 if not foun
+func FindRoom(rooms []Room, name string) int {
+	for i, r := range rooms {
+		if r.Name == name {
+			return i
+		}
+	}
+	return -1
+}
 
