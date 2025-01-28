@@ -80,3 +80,60 @@ func LinkRoom(rooms []Room, room1, room2 string) {
 		}
 	}
 }
+
+// ValidateRooms validates the rooms to ensure there is exactly one start room, one end room,
+// no duplicate room names, and no invalid Neighbours.
+func ValidateRooms(rooms []Room) error {
+	starts := 0
+	ends := 0
+
+	// Iterate over each room to validate its properties
+	for i := 0; i < len(rooms); i++ {
+		if rooms[i].Point == "start" {
+			starts++
+		}
+		if rooms[i].Point == "end" {
+			ends++
+		}
+
+		// Check for duplicate room names
+		for j := i + 1; j < len(rooms); j++ {
+			if rooms[i].Name == rooms[j].Name {
+				return errors.New("ERROR: invalid data format, duplicate room name: " + rooms[i].Name)
+			}
+		}
+
+		// Check if all linked rooms exist in the list of rooms
+		for _, ln := range rooms[i].Neighbours {
+			found := false
+			for _, rm := range rooms {
+				if ln == rm.Name {
+					found = true
+					break
+				}
+			}
+			if !found {
+				return errors.New("ERROR: invalid data format, bad link: " + rooms[i].Name + " > " + ln)
+			}
+		}
+	}
+
+	// Validate that there is exactly one start/end room
+	if starts != 1 {
+		if starts == 0 {
+			return errors.New("ERROR: invalid data format, no start room")
+		} else {
+			return errors.New("ERROR: invalid data format, too many start rooms")
+		}
+	}
+
+	if ends != 1 {
+		if ends == 0 {
+			return errors.New("ERROR: invalid data format, no end room")
+		} else {
+			return errors.New("ERROR: invalid data format, too many end rooms")
+		}
+	}
+
+	return nil
+}
