@@ -76,4 +76,18 @@ func FindRoom(rooms []Room, name string) int {
 	}
 	return -1
 }
+// SharedRoom checks if two routes share any intermediary rooms (excluding start and end rooms).
+// rt1: The first route to compare.
+// rt2: The second route to compare.
+// Returns true if the routes share any intermediary rooms, otherwise false.
+func SharedRoom(rt1, rt2 *Route) bool {
+	for _, room1 := range (*rt1)[1 : len(*rt1)-1] {
+		for _, room2 := range (*rt2)[1 : len(*rt2)-1] {
+			if room1 == room2 {
+				return true
+			}
+		}
+	}
+	return false
+}
 
