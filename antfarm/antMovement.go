@@ -125,4 +125,13 @@ func FindSeparates(routes, curCombo []Route, combosOfSeparates *[][]Route, ind i
 
 	wg.Done()
 }
-
+// ComboAvgLength calculates the average length of a combination of routes.
+// combo: The combination of routes to calculate the average length for.
+// Returns the average length as a float64.
+func ComboAvgLength(combo []Route) float64 {
+	lens := 0.0
+	for _, route := range combo {
+		lens += float64(len(route))
+	}
+	return lens / float64(len(combo))
+}
