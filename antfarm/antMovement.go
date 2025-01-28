@@ -34,3 +34,22 @@ func FindRoutes(curRoom Room, curRoute Route, routes *[]Route, rooms *[]Room) {
 		}
 	}
 }
+// SortRoutes sorts a slice of routes from shortest to longest.
+// rts: A pointer to the slice of routes to be sorted.
+// Returns an error if the slice is empty.
+func SortRoutes(rts *[]Route) error {
+	if len(*rts) < 1 {
+		return fmt.Errorf("ERROR: invalid data format, no valid routes")
+	}
+
+	for i := 0; i < len(*rts)-1; i++ {
+		for j := i + 1; j < len(*rts); j++ {
+			if len((*rts)[i]) > len((*rts)[j]) {
+				(*rts)[i], (*rts)[j] = (*rts)[j], (*rts)[i]
+			}
+		}
+	}
+
+	return nil
+}
+
