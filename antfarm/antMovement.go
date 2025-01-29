@@ -18,3 +18,15 @@ func OptimalsToRooms(optimals [][]Route, rooms *[]Room) [][][]*Room {
 
 	return roomCombos
 }
+
+func MakeAnts(optimals [][]Route, n int) [][]Ant {
+	setsOfAnts := [][]Ant{}
+
+	for i := range optimals {
+		setsOfAnts = append(setsOfAnts, []Ant{})
+		for j := 0; j < n; j++ {
+			setsOfAnts[i] = append(setsOfAnts[i], Ant{Name: j + 1})
+		}
+	}
+	return setsOfAnts
+}
