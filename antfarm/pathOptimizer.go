@@ -2,6 +2,7 @@ package antfarm
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 )
 
@@ -221,4 +222,46 @@ func IsSubset(combo1 []Route, combo2 []Route) bool {
 		}
 	}
 	return true
+}
+
+// RemoveRedundant removes duplicate, subset, or functionally equal combinations of routes.
+// optimals: The slice of all optimal combinations of routes.
+// Returns a slice of unique and non-redundant combinations.
+func RemoveRedundant(optimals [][]Route) [][]Route {
+	uniques := [][]Route{}
+	for i := 0; i < len(optimals); i++ {
+		found := false
+		for j := 0; j < len(uniques); j++ {
+			if reflect.DeepEqual(optimals[i], uniques[j]) {
+				found = true
+			}
+		}
+		if !found {
+			uniques = append(uniques, optimals[i])
+		}
+	}
+
+	for i := 0; i < len(uniques)-1; i++ {
+		for j := i + 1; j < len(uniques); j++ {
+			if len(uniques[i]) < len(uniques[j]) {
+				uniques[i], uniques[j] = uniques[j], uniques[i]
+			}
+		}
+	}
+
+	functionalUniques := [][]Route{uniques[0]}
+	for _, uniq := range uniques {
+		found := true
+		for _, fUniq := range functionalUniques {
+			if IsSubset(fUniq, uniq) {
+				found = false
+				break
+			}
+		}
+		if found {
+			functionalUniques = append(functionalUniques, uniq)
+		}
+	}
+
+	return functionalUniques
 }
