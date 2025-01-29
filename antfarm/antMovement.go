@@ -1,13 +1,11 @@
 package antfarm
+
 import (
 	"fmt"
-	"reflect"
 	"sync"
 )
 
-var (
-	sepMu sync.Mutex
-)
+var sepMu sync.Mutex
 
 // FindRoutes recursively finds all valid routes from the current room to the end room.
 // It appends each valid route to the routes slice.
@@ -17,7 +15,7 @@ var (
 // rooms: A pointer to the slice of all rooms in the farm.
 func FindRoutes(curRoom Room, curRoute Route, routes *[]Route, rooms *[]Room) {
 	// reached the end, add to routes
-	if curRoom.Role == "end" {
+	if curRoom.Point == "end" {
 		curRoute = append(curRoute, curRoom.Name)
 		toSave := make(Route, len(curRoute))
 		copy(toSave, curRoute) // copy values to a new route to avoid pointer problems
@@ -28,12 +26,13 @@ func FindRoutes(curRoom Room, curRoute Route, routes *[]Route, rooms *[]Room) {
 	// add new room to current route and proceed
 	if !IsOnRoute(curRoute, curRoom) {
 		curRoute = append(curRoute, curRoom.Name)
-		for _, link := range curRoom.Links {
+		for _, link := range curRoom.Neighbours {
 			nextRoom := (*rooms)[FindRoom(*rooms, link)]
 			FindRoutes(nextRoom, curRoute, routes, rooms)
 		}
 	}
 }
+
 // SortRoutes sorts a slice of routes from shortest to longest.
 // rts: A pointer to the slice of routes to be sorted.
 // Returns an error if the slice is empty.
@@ -52,6 +51,7 @@ func SortRoutes(rts *[]Route) error {
 
 	return nil
 }
+
 // IsOnRoute checks if a room is already in the current route.
 // route: The current route being checked.
 // room: The room to check for.
@@ -64,6 +64,7 @@ func IsOnRoute(route Route, room Room) bool {
 	}
 	return false
 }
+
 // FindRoom returns the index of a room in the rooms slice by its name.
 // rooms: The slice of all rooms in the farm.
 // name: The name of the room to find.
@@ -76,6 +77,7 @@ func FindRoom(rooms []Room, name string) int {
 	}
 	return -1
 }
+
 // SharedRoom checks if two routes share any intermediary rooms (excluding start and end rooms).
 // rt1: The first route to compare.
 // rt2: The second route to compare.
@@ -125,6 +127,7 @@ func FindSeparates(routes, curCombo []Route, combosOfSeparates *[][]Route, ind i
 
 	wg.Done()
 }
+
 // ComboAvgLength calculates the average length of a combination of routes.
 // combo: The combination of routes to calculate the average length for.
 // Returns the average length as a float64.
