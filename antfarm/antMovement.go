@@ -1,5 +1,7 @@
 package antfarm
 
+import "reflect"
+
 func OptimalsToRooms(optimals [][]Route, rooms *[]Room) [][][]*Room {
 	roomCombos := [][][]*Room{} // multiple combinations of routes
 
@@ -52,4 +54,43 @@ func AssignRoutes(optimals [][]Route, optiRooms [][][]*Room, setsOfAnts *[][]Ant
 			onRoutes[shortest]++
 		}
 	}
+}
+
+func BestSolution(optimals [][][]*Room, setsOfAnts [][]Ant) int {
+	if len(optimals) == 1 {
+		return 0
+	}
+
+	longestRoutes := make([]int, len(optimals))
+	for i, combo := range optimals {
+		longest := 0
+		for _, route := range combo {
+			// count ants on this route
+			ants := 0
+			for _, ant := range setsOfAnts[i] {
+				if reflect.DeepEqual(ant.Route, route) {
+					ants++
+				}
+			}
+
+			// turns to complete this route (only compare to longest if active)
+			turns := len(route) - 1 + ants
+			if ants > 0 && turns > longest {
+				longest = turns
+			}
+		}
+		longestRoutes[i] = longest
+	}
+
+	// find which optimal route is the quickest for these ants
+	quickI := 0
+	shortestLong := longestRoutes[0]
+	for i, n := range longestRoutes {
+		if n < shortestLong {
+			shortestLong = n
+			quickI = i
+		}
+	}
+
+	return quickI
 }
