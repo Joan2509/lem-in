@@ -30,3 +30,26 @@ func MakeAnts(optimals [][]Route, n int) [][]Ant {
 	}
 	return setsOfAnts
 }
+
+func AssignRoutes(optimals [][]Route, optiRooms [][][]*Room, setsOfAnts *[][]Ant) {
+	for i, routeCombo := range optimals {
+		// how many ants on each route in this combo
+		onRoutes := make([]int, len(routeCombo))
+
+		// loop over the set of ants pertaining to the combo of routes
+		for j := 0; j < len((*setsOfAnts)[i]); j++ {
+			// find the shortest route for this ant (length = route length + ants already taking it)
+			shortest := 0
+			shortD := len(routeCombo[0]) + onRoutes[0]
+			for k := 0; k < len(routeCombo); k++ {
+				if len(routeCombo[k])+onRoutes[k] < shortD {
+					shortest = k
+					shortD = len(routeCombo[k]) + onRoutes[k]
+				}
+			}
+			(*setsOfAnts)[i][j].Route = optiRooms[i][shortest]
+
+			onRoutes[shortest]++
+		}
+	}
+}
