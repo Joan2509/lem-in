@@ -39,7 +39,7 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 			room := Room{
 				Name:      matches[1],
 				Occupants: make(map[int]bool),
-				Point:     determineRoomRole(prev),
+				Point:      determineRoomRole(prev),
 			}
 
 			room.Cordinates[0], _ = strconv.Atoi(matches[2])
