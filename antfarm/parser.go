@@ -39,7 +39,7 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 			room := Room{
 				Name:      matches[1],
 				Occupants: make(map[int]bool),
-				Point:     determineRoomRole(prev),
+				Point:      determineRoomRole(prev),
 			}
 
 			room.Cordinates[0], _ = strconv.Atoi(matches[2])
@@ -81,66 +81,60 @@ func LinkRoom(rooms []Room, room1, room2 string) {
 	}
 }
 
-// ValidateRooms validates the rooms to ensure there is exactly one start room, one end room,
-// no duplicate room names, and no invalid Neighbours.
 func ValidateRooms(rooms []Room) error {
-	starts := 0
-	ends := 0
+	nameCount := make(map[string]int)
+	startCount, endCount := 0, 0
 
-	for i := 0; i < len(rooms); i++ {
-		if rooms[i].Point == "start" {
-			starts++
-		}
-		if rooms[i].Point == "end" {
-			ends++
-		}
-
-		// Check for duplicate room names
-		for j := i + 1; j < len(rooms); j++ {
-			if rooms[i].Name == rooms[j].Name {
-				return errors.New("ERROR: invalid data format, duplicate room name: " + rooms[i].Name)
-			}
+	for _, room := range rooms {
+		// Count role occurrences
+		switch room.Point {
+		case "start":
+			startCount++
+		case "end":
+			endCount++
 		}
 
-		// Check if all linked rooms exist in the list of rooms
-		for _, ln := range rooms[i].Neighbours {
-			found := false
-			for _, rm := range rooms {
-				if ln == rm.Name {
-					found = true
-					break
-				}
-			}
-			if !found {
-				return errors.New("ERROR: invalid data format, bad link: " + rooms[i].Name + " > " + ln)
+		// Check for duplicate names
+		nameCount[room.Name]++
+		if nameCount[room.Name] > 1 {
+			return errors.New("ERROR: duplicate room name: " + room.Name)
+		}
+
+		// Validate links
+		for _, neighbour := range room.Neighbours {
+			if !roomExists(rooms, neighbour) {
+				return errors.New("ERROR: invalid link: " + room.Name + " > " + neighbour)
 			}
 		}
 	}
 
-	// Validate that there is exactly one start/end room
-	if starts != 1 {
-		if starts == 0 {
-			return errors.New("ERROR: invalid data format, no start room")
-		} else {
-			return errors.New("ERROR: invalid data format, too many start rooms")
-		}
-	}
-
-	if ends != 1 {
-		if ends == 0 {
-			return errors.New("ERROR: invalid data format, no end room")
-		} else {
-			return errors.New("ERROR: invalid data format, too many end rooms")
-		}
+	// Validate room roles
+	switch {
+	case startCount == 0:
+		return errors.New("ERROR: no start room")
+	case startCount > 1:
+		return errors.New("ERROR: too many start rooms")
+	case endCount == 0:
+		return errors.New("ERROR: no end room")
+	case endCount > 1:
+		return errors.New("ERROR: too many end rooms")
 	}
 
 	return nil
 }
 
-// ReturnStartIndex returns the index of the "start" room in the slice of rooms.
-func ReturnStartIndex(rooms []Room) int {
-	for i, r := range rooms {
-		if r.Point == "start" {
+func roomExists(rooms []Room, name string) bool {
+	for _, room := range rooms {
+		if room.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+func StartIndex(rooms []Room) int {
+	for i, room := range rooms {
+		if room.Point == "start" {
 			return i
 		}
 	}
