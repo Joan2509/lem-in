@@ -94,3 +94,11 @@ func BestSolution(optimals [][][]*Room, setsOfAnts [][]Ant) int {
 
 	return quickI
 }
+
+func PopulateStart(rooms *[]Room, ants []Ant) {
+	start := &(*rooms)[StartIndex(*rooms)]
+	for _, a := range ants {
+		start.Occupants[a.Name] = true
+	}
+}
+
