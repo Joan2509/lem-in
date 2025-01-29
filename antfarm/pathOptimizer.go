@@ -161,3 +161,48 @@ func ShortCombos(combosOfSeparates [][]Route, routes []Route) [][]Route {
 
 	return shorts
 }
+
+// LowAverages finds the combinations of routes with the lowest average length for each number of routes.
+// combosOfSeparates: The slice of all valid combinations of non-overlapping routes.
+// Returns a slice of combinations with the lowest average length.
+func LowAverages(combosOfSeparates [][]Route) [][]Route {
+	combosByLength := make(map[int][][]Route)
+	bestCombosByLength := make(map[int][][]Route)
+	var longestCombo int
+	lowAvgs := [][]Route{}
+
+	for _, combo := range combosOfSeparates {
+		combosByLength[len(combo)] = append(combosByLength[len(combo)], combo)
+		if len(combo) > longestCombo {
+			longestCombo = len(combo)
+		}
+	}
+
+	for key, category := range combosByLength {
+		bestAvgLen := ComboAvgLength(category[0])
+		for _, combo := range category {
+			if ComboAvgLength(combo) < bestAvgLen {
+				bestAvgLen = ComboAvgLength(combo)
+			}
+		}
+		for _, combo := range category {
+			if ComboAvgLength(combo) == bestAvgLen {
+				bestCombosByLength[key] = append(bestCombosByLength[key], combo)
+			}
+		}
+	}
+
+	lowAvgs = append(lowAvgs, bestCombosByLength[longestCombo]...)
+
+	benchmark := ComboAvgLength(bestCombosByLength[longestCombo][0])
+	for i := longestCombo - 1; i > 0; i-- {
+		for _, combo := range bestCombosByLength[i] {
+			if ComboAvgLength(combo) < benchmark {
+				lowAvgs = append(lowAvgs, combo)
+				benchmark = ComboAvgLength(combo)
+			}
+		}
+	}
+
+	return lowAvgs
+}
