@@ -206,3 +206,19 @@ func LowAverages(combosOfSeparates [][]Route) [][]Route {
 
 	return lowAvgs
 }
+
+// IsSubset checks if one combination of routes is a subset of another.
+// combo1: The first combination of routes.
+// combo2: The second combination of routes.
+// Returns true if combo2 is a subset of combo1, otherwise false.
+func IsSubset(combo1 []Route, combo2 []Route) bool {
+	if len(combo1) < len(combo2) {
+		return false
+	}
+	for i := range combo2 {
+		if len(combo2[i]) != len(combo1[i]) {
+			return false
+		}
+	}
+	return true
+}
