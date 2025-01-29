@@ -1,7 +1,9 @@
 package antfarm
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 )
 
 func OptimalsToRooms(optimals [][]Route, rooms *[]Room) [][][]*Room {
@@ -104,68 +106,68 @@ func PopulateStart(rooms *[]Room, ants []Ant) {
 	}
 }
 
-// func MoveAnts(ants []Ant) []string {
-// 	var turns []string
-// 	antsAtEnd := 0
+func MoveAnts(ants []Ant) []string {
+	var turns []string
+	antsAtEnd := 0
 
-// 	for antsAtEnd < len(ants) {
-// 		var moves []string
-// 		linksUsed := make(map[string]bool)
+	for antsAtEnd < len(ants) {
+		var moves []string
+		linksUsed := make(map[string]bool)
 
-// 		for i := range ants {
-// 			if ants[i].AtEnd {
-// 				continue
-// 			}
+		for i := range ants {
+			if ants[i].AtEnd {
+				continue
+			}
 
-// 			if canMove, currentRoom, nextRoom := NextIsOk(ants[i], linksUsed); canMove {
-// 				// Remove ant from current room
-// 				delete(currentRoom.Occupants, ants[i].Name)
+			if canMove, currentRoom, nextRoom := NextIsOk(ants[i], linksUsed); canMove {
+				// Remove ant from current room
+				delete(currentRoom.Occupants, ants[i].Name)
 
-// 				// Mark link as used
-// 				linksUsed[currentRoom.Name+"-"+nextRoom.Name] = true
+				// Mark link as used
+				linksUsed[currentRoom.Name+"-"+nextRoom.Name] = true
 
-// 				// Move ant to next room
-// 				nextRoom.Occupants[ants[i].Name] = true
-// 				ants[i].RoomIndex++
+				// Move ant to next room
+				nextRoom.Occupants[ants[i].Name] = true
+				ants[i].RoomIndex++
 
-// 				// Check if ant reached end
-// 				if nextRoom.Point == "end" {
-// 					ants[i].AtEnd = true
-// 					antsAtEnd++
-// 				}
+				// Check if ant reached end
+				if nextRoom.Point == "end" {
+					ants[i].AtEnd = true
+					antsAtEnd++
+				}
 
-// 				// Record move
-// 				moves = append(moves, fmt.Sprintf("L%d-%s", ants[i].Name, nextRoom.Name))
-// 			}
-// 		}
+				// Record move
+				moves = append(moves, fmt.Sprintf("L%d-%s", ants[i].Name, nextRoom.Name))
+			}
+		}
 
-// 		if len(moves) > 0 {
-// 			turns = append(turns, joinMoves(moves))
-// 		}
-// 	}
+		if len(moves) > 0 {
+			turns = append(turns, joinMoves(moves))
+		}
+	}
 
-// 	return turns
-// }
+	return turns
+}
 
-// func joinMoves(moves []string) string {
-// 	return strings.Join(moves, " ")
-// }
+func joinMoves(moves []string) string {
+	return strings.Join(moves, " ")
+}
 
-// func NextIsOk(a Ant, linksUsed map[string]bool) (bool, *Room, *Room) {
-// 	currentRoom := a.Route[a.RoomIndex]
+func NextIsOk(a Ant, linksUsed map[string]bool) (bool, *Room, *Room) {
+	currentRoom := a.Route[a.RoomIndex]
 
-// 	// No move possible if at end
-// 	if currentRoom.Point == "end" {
-// 		return false, currentRoom, nil
-// 	}
+	// No move possible if at end
+	if currentRoom.Point == "end" {
+		return false, currentRoom, nil
+	}
 
-// 	nextRoom := a.Route[a.RoomIndex+1]
+	nextRoom := a.Route[a.RoomIndex+1]
 
-// 	// Check if link is already used
-// 	if linksUsed[currentRoom.Name+"-"+nextRoom.Name] {
-// 		return false, currentRoom, nextRoom
-// 	}
+	// Check if link is already used
+	if linksUsed[currentRoom.Name+"-"+nextRoom.Name] {
+		return false, currentRoom, nextRoom
+	}
 
-// 	// Check if next room is empty or is end room
-// 	return len(nextRoom.Occupants) < 1 || nextRoom.Point == "end", currentRoom, nextRoom
-// }
+	// Check if next room is empty or is end room
+	return len(nextRoom.Occupants) < 1 || nextRoom.Point == "end", currentRoom, nextRoom
+}
