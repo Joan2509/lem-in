@@ -3,6 +3,7 @@ package antfarm
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"regexp"
 	"strconv"
@@ -22,6 +23,10 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 	if err != nil || ants < 1 {
 		return 0, rooms, errors.New("ERROR: invalid number of ants")
 	}
+	fileName := os.Args[1]
+	fmt.Printf("$ go run . %s", fileName)
+	fmt.Println()
+	fmt.Println(ants)
 
 	var prev string
 	roomRegex := regexp.MustCompile(`^(\w+)\s([-+]?\d+)\s([-+]?\d+)$`)
@@ -29,6 +34,7 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
+		fmt.Println(line)
 
 		if line == "" || strings.HasPrefix(line, "#") {
 			prev = line
@@ -39,7 +45,7 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 			room := Room{
 				Name:      matches[1],
 				Occupants: make(map[int]bool),
-				Point:      determineRoomRole(prev),
+				Point:     determineRoomRole(prev),
 			}
 
 			room.Cordinates[0], _ = strconv.Atoi(matches[2])
@@ -54,6 +60,7 @@ func GetStartValues(file *os.File) (int, []Room, error) {
 
 		prev = line
 	}
+	fmt.Println()
 
 	return ants, rooms, nil
 }
