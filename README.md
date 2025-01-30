@@ -176,3 +176,14 @@ Error messages include:
 - Implements bubble sort for route ordering
 - Employs WaitGroups for goroutine synchronization
 - Maintains room pointers for efficient movement tracking
+
+## Project Timeline
+Below are diagrams illustrating the project's pipeline:
+
+### Ant Farm Program Pipeline
+
+![Project Timeline](static/images/s1.png)
+
+### Ant Movement and Assignment Pipeline
+
+![Project Timeline](static/images/s2.png)
